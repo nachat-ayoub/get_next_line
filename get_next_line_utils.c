@@ -6,62 +6,53 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:57 by anachat           #+#    #+#             */
-/*   Updated: 2024/11/30 10:04:07 by anachat          ###   ########.fr       */
+/*   Updated: 2024/11/30 18:52:34 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *str)
+void	*ft_malloc(size_t count, size_t size)
 {
-	size_t	i;
+	unsigned char	*p;
+	size_t			n;
 
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-
-char	*ft_strchr(char *str, int c)
-{
-	size_t	i;
-	char	ch;
-
-	ch = (char) c;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == ch)
-			return ((char *)&str[i]);
-		i++;
-	}
-	if (ch == '\0' && str[i] == '\0')
-		return ((char *)&str[i]);
-	return (NULL);
+	p = NULL;
+	n = count * size;
+	if (count != 0 && n / count != size)
+		return (NULL);
+	p = malloc(n);
+	if (p == NULL)
+		return (NULL);
+	return ((void *)p);
 }
 
 char	*ft_strdup(char *s1)
 {
-	char	*copy;
-	size_t	size;
-	size_t	i;
+	char			*dest;
+	unsigned int	i;
 
-	size = ft_strlen(s1) + 1;
-	copy = malloc(size * sizeof(char));
-	if (copy == NULL)
+	dest = malloc(ft_strlen(s1) * 1);
+	if (!dest)
 		return (NULL);
-	if(size > 0)
+	i = 0;
+	while (s1[i])
 	{
-		i = 0;
-		while (s1[i] && i < size - 1)
-		{
-			copy[i] = s1[i];
-			i++;
-		}
-		copy[i] = '\0';
+		dest[i] = s1[i];
+		i++;
 	}
-	return (copy);
+	dest[i] = 0;
+	return (dest);
+}
+
+size_t	ft_strlen(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
 }
 
 char	*ft_substr(char *s, unsigned int start, size_t len)
@@ -75,7 +66,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len > ft_strlen(s + start))
 		len = ft_strlen(s + start);
-	sub = calloc((len + 1), sizeof(char));
+	sub = malloc((len + 1) * sizeof(char));
 	if (!sub)
 		return (NULL);
 	i = 0;
@@ -100,7 +91,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (ft_strdup(s2));
 	if (!s2 && s1)
 		return (ft_strdup(s1));
-	str = calloc((ft_strlen(s1) + ft_strlen(s2) + 1), sizeof(char));
+	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	i = 0;
