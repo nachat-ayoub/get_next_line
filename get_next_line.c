@@ -6,72 +6,84 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/11/28 11:32:54 by anachat          ###   ########.fr       */
+/*   Updated: 2024/11/30 10:28:29 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static ssize_t get_nl_index(char *str)
+static char	*fill_line_buffer(int fd, char *remainder, char *buffer)
 {
-	ssize_t	i;
+	ssize_t	bytes_read;
+	char	*tmp;
 
-	if(!str)
-		return (-1);
-	i = 0;
-	while (str[i])
+	while ((bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
-		if(str[i] == '\n')
-			return (i);
-		i++;
+		buffer[bytes_read] = '\0';
+		if(!remainder)
+			remainder = ft_strdup("");
+		tmp = ft_strjoin(remainder, buffer);
+		if (!tmp)
+			return (NULL);
+		free(remainder);
+		remainder = tmp;
+		tmp = NULL;
+		if (ft_strchr(remainder, '\n'))
+			break ;
 	}
-	return (-1);
+	if (bytes_read == -1)
+	{
+		free(remainder);
+		return (NULL);
+	}
+	return (remainder);
+}
+
+
+static char	*set_line(char *line)
+{
+	char	*remainder;
+	size_t	i;
+
+	i = 0;
+	while (line[i] != '\n' && line[i] != '\0')
+		i++;
+	if(line[i] == '\0' || line[1] == '\0')
+		return (NULL);
+	remainder = ft_substr(line, i + 1, ft_strlen(line) - i);
+	// printf(RED "[remainder]: %s\n" RESET, remainder);
+	if(remainder && remainder[0] == '\0')
+	{
+		free(remainder);
+		remainder = NULL; 
+	}
+	line[i + 1] = '\0';
+	return (remainder);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*str;
-	char		buffer[BUFFER_SIZE + 1];
-	// char		*buffer;
-	char		*line = NULL;
-	ssize_t			i;
-	ssize_t bytes_read;
-	char *tmp = NULL;
+	static char	*remainder;
+	char		*buffer;
+	char		*line;
 
-	// buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	while((bytes_read = read(fd, buffer, BUFFER_SIZE)) >= 0 || str != NULL)
+    buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if ((fd < 0) || (BUFFER_SIZE <= 0) || (read(fd, 0, 0) < 0) || fd > OPEN_MAX)
 	{
-		// printf(YELLOW "==> [bytes_read]: '%zd'  |  ==> [buffer]: '%s'  |  [str]: '%s'\n" RESET, bytes_read, buffer, str);
-		if(bytes_read == 0 && str && *str == '\0')
-			return (NULL);
-		buffer[bytes_read] = '\0';
-		str = ft_strjoin(str, buffer);
-		i = get_nl_index(str);
-		// printf(YELLOW "==> [buffer]: '%s'  |  [str]: '%s'\n" RESET, buffer, str);
-		if(i != -1)
-		{
-			// printf("[i = %zd]\n", i);
-			// get the first part + \n
-			line = strndup(str, i + 1);
-			// get the last part after \n
-			tmp = strdup(str + i + 1);
-			free(str);
-			str = tmp;
-			free(tmp);
-			// printf(RED "str: %s\n" RESET, str);
-			// printf(RED "bytes read: %zd\n" RESET, bytes_read);
-			return (line);
-		}
-		if (bytes_read <= 0 && str != NULL && *str != '\0')
-		{
-			line = strdup(str);
-			free(str);
-			str = NULL;
-			return (line);
-		}
+		free(buffer);
+		free(remainder);
+		buffer = NULL;
+		remainder = NULL;
+		printf("Here\n");
+		return (NULL);
 	}
-	free(tmp);
-	free(str);
-	free(line);
-	return (NULL);
+	if(!buffer)
+		return (NULL);
+	line = fill_line_buffer(fd, remainder, buffer);
+	free(buffer);
+	buffer = NULL;
+	if(!line)
+		return (free(remainder), NULL);
+	remainder = set_line(line);
+	return (line);
 }
