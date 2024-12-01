@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/01 17:17:51 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/01 18:45:03 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ char	*get_next_line(int fd)
 		|| (read(fd, 0, 0) < 0) || fd > OPEN_MAX)
 	{
 		free(buffer);
-		free(remainder[fd]);
 		buffer = NULL;
+		free(remainder[fd]);
 		remainder[fd] = NULL;
 		return (NULL);
 	}
