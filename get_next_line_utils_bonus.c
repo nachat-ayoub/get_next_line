@@ -6,11 +6,11 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:57 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/01 10:36:32 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/01 17:16:43 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	*ft_malloc(size_t count, size_t size)
 {
@@ -32,6 +32,8 @@ char	*ft_strdup(char *s1)
 	char			*dest;
 	unsigned int	i;
 
+	if (!s1)
+		return (NULL);
 	dest = malloc(ft_strlen(s1) * 1);
 	if (!dest)
 		return (NULL);

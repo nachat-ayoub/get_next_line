@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 14:36:48 by anachat           #+#    #+#             */
-/*   Updated: 2024/11/30 18:51:37 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/01 17:16:23 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
-# include <stdio.h>
 
 char	*get_next_line(int fd);
 void	*ft_malloc(size_t count, size_t size);

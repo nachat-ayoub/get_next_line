@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:57 by anachat           #+#    #+#             */
-/*   Updated: 2024/11/30 18:52:34 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/01 17:14:17 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ char	*ft_strdup(char *s1)
 	char			*dest;
 	unsigned int	i;
 
+	if (!s1)
+		return (NULL);
 	dest = malloc(ft_strlen(s1) * 1);
 	if (!dest)
 		return (NULL);

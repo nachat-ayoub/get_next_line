@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/11/30 19:00:37 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/01 17:14:10 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ static char	*ft_strchr(char *s, int c)
 	unsigned int	i;
 	char			cc;
 
+	if (!s)
+		return (NULL);
 	cc = (char) c;
 	i = 0;
 	while (s[i])
@@ -41,9 +43,7 @@ static char	*set_line(char *line)
 	if (line[i] == '\0')
 		return (NULL);
 	remainder = ft_substr(line, i + 1, ft_strlen(line) - i);
-	if (!remainder)
-		return (NULL);
-	if (*remainder == '\0')
+	if (!remainder || *remainder == '\0')
 	{
 		free(remainder);
 		remainder = NULL;
@@ -60,7 +60,7 @@ static char	*fill_line_buffer(int fd, char *remainder, char *buffer)
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		bytes_read = read(fd, buffer, ((size_t)BUFFER_SIZE));
 		if (bytes_read == -1)
 			return (free(remainder), NULL);
 		else if (bytes_read == 0)
@@ -68,9 +68,11 @@ static char	*fill_line_buffer(int fd, char *remainder, char *buffer)
 		buffer[bytes_read] = '\0';
 		if (!remainder)
 			remainder = ft_strdup("");
-		tmp = ft_strjoin(remainder, buffer);
-		free(remainder);
-		remainder = tmp;
+		if (!remainder)
+			return (NULL);
+		tmp = remainder;
+		remainder = ft_strjoin(tmp, buffer);
+		free(tmp);
 		tmp = NULL;
 		if (ft_strchr(remainder, '\n'))
 			break ;
@@ -84,8 +86,9 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	char		*line;
 
-	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if ((fd < 0) || (BUFFER_SIZE <= 0) || (read(fd, 0, 0) < 0) || fd > OPEN_MAX)
+	buffer = malloc((((size_t)BUFFER_SIZE) + 1) * sizeof(char));
+	if ((fd < 0) || (((size_t)BUFFER_SIZE) <= 0)
+		|| (read(fd, 0, 0) < 0) || fd > OPEN_MAX)
 	{
 		free(buffer);
 		free(remainder);
