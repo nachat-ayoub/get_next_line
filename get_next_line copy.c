@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/03 13:21:45 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/03 10:45:38 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,28 +32,19 @@ static char	*ft_strchr(char *s, int c)
 	return (NULL);
 }
 
-static char	*set_line(char **line, char *re)
+static char	*set_line(char **line)
 {
 	char	*remainder;
 	char	*tmp;
 	ssize_t	i;
 
 	i = 0;
-	if (!line || !*line || !**line)
-		return (NULL);
-	while (line && *line && (*line)[i] != '\n' && (*line)[i] != '\0')
+	while ((*line)[i] != '\n' && (*line)[i] != '\0')
 		i++;
-	if (line && *line && (*line)[i] == '\0')
+	if ((*line)[i] == '\0' || (*line)[1] == '\0')
 		return (NULL);
 	remainder = ft_substr(*line, i + 1, ft_strlen(*line) - i);
-	if (!remainder)
-	{
-		free(re);
-		re = NULL;
-		return (NULL);
-	}
-		// return (free(re), re = NULL, NULL);
-	if (*remainder == '\0')
+	if (!remainder || *remainder == '\0')
 	{
 		free(remainder);
 		remainder = NULL;
@@ -61,8 +52,9 @@ static char	*set_line(char **line, char *re)
 	tmp = ft_substr(*line, 0, i + 1);
 	free(*line);
 	*line = tmp;
-	if (!tmp)
-		return (free(re), re = NULL, NULL);
+	tmp = NULL;
+	if(!tmp)
+		return (NULL);
 	return (remainder);
 }
 
@@ -86,10 +78,10 @@ static char	*fill_line_buffer(int fd, char *remainder, char *buffer)
 			return (NULL);
 		tmp = remainder;
 		remainder = ft_strjoin(tmp, buffer);
-		if (!remainder)
-			return (free(tmp),tmp = NULL, NULL );
 		free(tmp);
 		tmp = NULL;
+		if (!remainder)
+			return (NULL);
 		if (ft_strchr(remainder, '\n'))
 			break ;
 	}
@@ -103,22 +95,22 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	buffer = malloc((((size_t)BUFFER_SIZE) + 1) * sizeof(char));
-	if (!buffer || (fd < 0) || BUFFER_SIZE <= 0
-		|| (read(fd, 0, 0) < 0) || fd > OPEN_MAX)
+	if (!buffer || fd < 0 || (size_t)BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0
+		|| fd > OPEN_MAX)
 	{
-		if (!buffer)
-			return (free(remainder), remainder = NULL, NULL);
-		free(buffer);
 		free(remainder);
-		buffer = NULL;
 		remainder = NULL;
+		free(buffer);
+		buffer = NULL;
 		return (NULL);
 	}
+	if (!buffer)
+		return (NULL);
 	line = fill_line_buffer(fd, remainder, buffer);
 	free(buffer);
 	buffer = NULL;
 	if (!line)
-		return (free(remainder), remainder = NULL, NULL);
-	remainder = set_line(&line, remainder);
+		return (free(remainder), NULL);
+	remainder = set_line(&line);
 	return (line);
 }

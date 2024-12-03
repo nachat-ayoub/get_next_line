@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/01 18:45:03 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/02 11:44:42 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,19 @@
 static char	*ft_strchr(char *s, int c)
 {
 	unsigned int	i;
-	char			cc;
+	char			ch;
 
 	if (!s)
 		return (NULL);
-	cc = (char) c;
+	ch = (char) c;
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] == cc)
+		if (s[i] == ch)
 			return ((char *) &s[i]);
 		i++;
 	}
-	if (s[i] == cc)
+	if (s[i] == ch)
 		return ((char *) &s[i]);
 	return (NULL);
 }
@@ -87,13 +87,15 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	buffer = malloc((((size_t)BUFFER_SIZE) + 1) * sizeof(char));
-	if ((fd < 0) || (((size_t)BUFFER_SIZE) <= 0)
-		|| (read(fd, 0, 0) < 0) || fd > OPEN_MAX)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
 		free(buffer);
 		buffer = NULL;
-		free(remainder[fd]);
-		remainder[fd] = NULL;
+		if(fd >= 0)
+		{
+			free(remainder[fd]);
+			remainder[fd] = NULL;
+		}
 		return (NULL);
 	}
 	if (!buffer)
@@ -102,7 +104,7 @@ char	*get_next_line(int fd)
 	free(buffer);
 	buffer = NULL;
 	if (!line)
-		return (free(remainder[fd]), NULL);
+		return (NULL);
 	remainder[fd] = set_line(line);
 	return (line);
 }
