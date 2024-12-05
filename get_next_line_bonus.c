@@ -1,31 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/05 16:39:54 by anachat          ###   ########.fr       */
+/*   Updated: 2024/12/05 16:41:03 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
-static int	check(int fd)
-{
-	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (-1);
-	return (1);
-}
-
-static int	allocate(char	**buffer)
-{
-	*buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
-	if (!*buffer)
-		return (-1);
-	return (1);
-}
+#include "get_next_line_bonus.h"
 
 static char	*set_line(char *remainder)
 {
@@ -63,31 +48,46 @@ static char	*get_new_remainder(char *remainder)
 	return (new_remainder);
 }
 
+static int	check(int fd)
+{
+	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (-1);
+	return (1);
+}
+
+static int	allocate(char	**buffer)
+{
+	*buffer = malloc(((size_t)BUFFER_SIZE + 1) * sizeof(char));
+	if (!*buffer)
+		return (-1);
+	return (1);
+}
+
 char	*get_next_line(int fd)
 {
-	static char	*rema;
+	static char	*rem[OPEN_MAX];
 	ssize_t		bytes_read;
-	char		*buffer;
+	char		*buf;
 	char		*line;
 
-	if (check(fd) == -1 || allocate(&buffer) == -1)
-		return (free(rema), rema = NULL, NULL);
+	if (check(fd) == -1 || allocate(&buf) == -1)
+		return (free(rem[fd]), rem[fd] = NULL, NULL);
 	bytes_read = 1;
 	while (bytes_read)
 	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
-			return (free(rema), free(buffer), rema = NULL, buffer = NULL, NULL);
-		buffer[bytes_read] = '\0';
-		rema = ft_strjoin(rema, buffer);
-		if (ft_strchr(buffer, '\n'))
+			return (free(rem[fd]), free(buf), rem[fd] = NULL, buf = NULL, NULL);
+		buf[bytes_read] = '\0';
+		rem[fd] = ft_strjoin(rem[fd], buf);
+		if (ft_strchr(buf, '\n'))
 			break ;
 	}
-	free(buffer);
-	buffer = NULL;
-	line = set_line(rema);
+	free(buf);
+	buf = NULL;
+	line = set_line(rem[fd]);
 	if (!line)
-		return (free(rema), rema = NULL, NULL);
-	rema = get_new_remainder(rema);
+		return (free(rem[fd]), rem[fd] = NULL, NULL);
+	rem[fd] = get_new_remainder(rem[fd]);
 	return (line);
 }
