@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 14:36:48 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/05 16:37:14 by anachat          ###   ########.fr       */
+/*   Updated: 2025/01/12 14:23:54 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@
 # include <limits.h>
 
 char	*get_next_line(int fd);
-size_t	ft_strlen(char *str);
-char	*ft_substr(char *s, unsigned int start, size_t len);
-char	*ft_strdup(char *s1);
-char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strchr(char *s, int c);
+size_t	str_len(char *str);
+char	*str_cut(char *s, unsigned int start, size_t len);
+char	*str_clone(char *s1);
+char	*str_concat(char *s1, char *s2);
+char	*find_char(char *s, int c);
 
 #endif

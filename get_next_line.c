@@ -6,7 +6,7 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:52 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/05 16:39:54 by anachat          ###   ########.fr       */
+/*   Updated: 2025/01/12 14:23:54 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static char	*set_line(char *remainder)
 		i++;
 	if (remainder[i] == '\n')
 		i++;
-	line = ft_substr(remainder, 0, i);
+	line = str_cut(remainder, 0, i);
 	if (!line)
 		return (NULL);
 	return (line);
@@ -55,7 +55,7 @@ static char	*get_new_remainder(char *remainder)
 		i++;
 	if (remainder[i] == '\n')
 		i++;
-	new_remainder = ft_substr(remainder, i, ft_strlen(remainder));
+	new_remainder = str_cut(remainder, i, str_len(remainder));
 	free(remainder);
 	remainder = NULL;
 	if (!new_remainder)
@@ -79,8 +79,8 @@ char	*get_next_line(int fd)
 		if (bytes_read == -1)
 			return (free(rema), free(buffer), rema = NULL, buffer = NULL, NULL);
 		buffer[bytes_read] = '\0';
-		rema = ft_strjoin(rema, buffer);
-		if (ft_strchr(buffer, '\n'))
+		rema = str_concat(rema, buffer);
+		if (find_char(buffer, '\n'))
 			break ;
 	}
 	free(buffer);

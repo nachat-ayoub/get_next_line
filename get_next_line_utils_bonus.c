@@ -6,21 +6,21 @@
 /*   By: anachat <anachat@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 15:03:57 by anachat           #+#    #+#             */
-/*   Updated: 2024/12/05 16:36:03 by anachat          ###   ########.fr       */
+/*   Updated: 2025/01/12 14:23:54 by anachat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*str_concat(char *s1, char *s2)
 {
 	char	*str;
 	size_t	i;
 	size_t	j;
 
 	if (!s1)
-		return (free(s1), s1 = NULL, ft_strdup(s2));
-	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+		return (free(s1), s1 = NULL, str_clone(s2));
+	str = malloc((str_len(s1) + str_len(s2) + 1) * sizeof(char));
 	if (!str)
 		return (free(s1), s1 = NULL, NULL);
 	i = 0;
@@ -36,17 +36,17 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-char	*ft_strdup(char *s1)
+char	*str_clone(char *s1)
 {
 	char		*str;
 
-	str = ft_substr(s1, 0, ft_strlen(s1));
+	str = str_cut(s1, 0, str_len(s1));
 	if (str == NULL)
 		return (NULL);
 	return (str);
 }
 
-size_t	ft_strlen(char *s)
+size_t	str_len(char *s)
 {
 	size_t	i;
 
@@ -58,17 +58,17 @@ size_t	ft_strlen(char *s)
 	return (i);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+char	*str_cut(char *s, unsigned int start, size_t len)
 {
 	size_t	i;
 	char	*sub;
 
 	if (!s)
 		return (NULL);
-	if (start > ft_strlen(s))
-		return (ft_strdup(""));
-	if (len > ft_strlen(s + start))
-		len = ft_strlen(s + start);
+	if (start > str_len(s))
+		return (str_clone(""));
+	if (len > str_len(s + start))
+		len = str_len(s + start);
 	sub = malloc((len + 1) * sizeof(char));
 	if (!sub)
 		return (NULL);
@@ -82,7 +82,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	return (sub);
 }
 
-char	*ft_strchr(char *s, int c)
+char	*find_char(char *s, int c)
 {
 	unsigned int	i;
 	char			ch;
